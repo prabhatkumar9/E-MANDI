@@ -71,5 +71,6 @@ select * from orderdetails;
 select * from shipment;
 select * from payment;
 
-select * from product where name = 'Rice';
+select product.id,product.name,product.price,product.description,stock.quantity from product inner join stock on product.name = stock.stockid
+where product.name='rice';
 delete orders  where custid = 1;

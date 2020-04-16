@@ -20,8 +20,12 @@ public class Main {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	x = Integer.parseInt(br.readLine().trim());
 	
-	////item quatity variable
+	////item quantity variable
 	int num=0;
+	//// name of item 
+	 String nm   = null;
+	 //// updated quantity
+	 int quantity;
 	
 	String firstname;
 	String lastname;
@@ -114,7 +118,7 @@ public class Main {
 					  /// show products
 					    cruddao.displayProductlist();
 					    System.out.println("Add to Cart Item by name : ");
-					    String nm  = br.readLine().trim();
+					    nm  = br.readLine().trim();
 					    System.out.println("Enter Quantity : ");
 					    num = Integer.parseInt(br.readLine().trim());
 					    list = cruddao.addTocart(nm,list,num);
@@ -123,7 +127,7 @@ public class Main {
 				    }while(yes.equals("yes"));
 				    break;
 				case 2:
-				    cruddao.displayCart(list,num);
+				   cruddao.displayCart(list);
 				    try {
 					    System.out.println("Want to remove any item ? Enter Item.No.  : ");
 					    int index =Integer.parseInt(br.readLine().trim());
@@ -135,6 +139,7 @@ public class Main {
 					yes = br.readLine();
 					if(yes.equals("yes")) {
 					    cruddao.placeOrder(list,user.getCustomerId());
+					    cruddao.updateStock(list);
 					}
 
 //				    cruddao.shippingDetails(user);
@@ -188,7 +193,7 @@ public class Main {
 				     System.out.println("Add Product Description :  ");
 				     String pdes = br.readLine().trim();
 				     System.out.println("Add Product Quatity in Kg  :  ");
-				     int  quantity = Integer.parseInt(br.readLine().trim());
+				     quantity = Integer.parseInt(br.readLine().trim());
 				     
 				     /// getting product id
 				     String pid = productdao.generateProductId();

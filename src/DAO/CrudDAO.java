@@ -16,7 +16,7 @@ public class CrudDAO  implements CrudDaoInterface{
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     ConnectionManager cm = new ConnectionManager();
     Connection con;
-   
+ 
     public void updateProduct(String proid) throws Exception {
 	System.out.println("Select What you want to update.");
 	System.out.println("1. Product Name.");
@@ -53,14 +53,10 @@ public class CrudDAO  implements CrudDaoInterface{
  public void updateDB(String update) throws Exception {
 	con = cm.getConnection();
 	PreparedStatement ps = con.prepareStatement(update);
-//	try {
 	    int x = ps.executeUpdate();
 		if(x==1) {
 		    System.out.println("Updated Successfully.");
 		}
-//	}catch(Exception e) {
-//	    System.out.println(e);
-//	}
  }
  
  public ResultSet  getDB(String sql) throws Exception {
@@ -96,8 +92,8 @@ public class CrudDAO  implements CrudDaoInterface{
 		   String name = rs.getString(2);
 		   int price = rs.getInt(3);
 		   String desc = rs.getString(4);
-		   int qunt = rs.getInt(5);
-		   if(qunt>=num) {
+		   int qaunt = rs.getInt(5);
+		   if(qaunt>=num) {
 		       list.add(new Product(id,name,price*num, desc)); 
 		   }else {
 		       System.out.println("Stock not available");
@@ -109,19 +105,30 @@ public class CrudDAO  implements CrudDaoInterface{
  
 //	public void displayCart(int num, ArrayList<Product> cartlist)  
     
-	public void displayCart(ArrayList<Product> cartlist, int num){
+	public void displayCart(ArrayList<Product> cartlist) throws Exception{
+	    String sql = null;
+	    con = cm.getConnection();
+	   
 	    try {
 		int lenOfList = cartlist.size();
 		int cartTotal = 0; 
 		int n = 1;
+		int itemprice=0;
 		System.out.println();
 		System.out.println("ITEMS IN CART : ");
 		System.out.println();
 		for (int i = 0; i < lenOfList; i++) {
 			Product product = cartlist.get(i);
+			String pid = product.getProductId();
 			cartTotal = cartTotal+product.getPrice();
+			sql = "select price from product where id = '"+pid+"'";
+			 PreparedStatement ps = con.prepareStatement(sql);
+			 ResultSet rs = ps.executeQuery();
+			 while(rs.next()) {
+			     itemprice = rs.getInt(1);
+			 }
 			System.out.println("***********************************************************************************************************************************************************************");
-			System.out.println("itemNo. : "+(i+n)+"\tItem : "+num+" Kg. "+product.getProductName()+" \tPrice : "+product.getPrice()/num+"x"+num+" = "+product.getPrice()+" Rs. \tDescription : "+product.getDescription());
+			System.out.println("itemNo. : "+(i+n)+"\tItem : " +product.getPrice()/itemprice+" Kg. "+product.getProductName()+" \tPrice : "+product.getPrice()/itemprice+"x"+itemprice+" = "+product.getPrice()+" Rs. \tDescription : "+product.getDescription());
 			System.out.println();
 		}
 		/// total amount to pay
@@ -155,7 +162,8 @@ public class CrudDAO  implements CrudDaoInterface{
 		if(y==1) {
 		    System.out.println("Order placed.");
 		}
-		
+		 
+		///display order pdf
 		for(int i=0;i<cartlist.size();i++) {
 		 Product item = cartlist.get(i);
 			 cartValue += item.getPrice();
@@ -165,6 +173,34 @@ public class CrudDAO  implements CrudDaoInterface{
 			 int itemprice = item.getPrice();
 	
 	    }
+	}
+	
+	public void updateStock(ArrayList<Product> cartlist) throws Exception {
+	    	for(int i=0;i<cartlist.size();i++) {
+	    	    Product p = cartlist.get(i);
+	    	    String nm = p.getProductName();
+	    	    String sql = "select product.price,stock.quantity from product inner join stock on product.name=stock.stockid where product.name='"+nm+"'";
+	    	    con = cm.getConnection();
+	    	    //// getting quantity from stock
+	    	    PreparedStatement ps = con.prepareStatement(sql);
+	    	    ResultSet rs = ps.executeQuery();
+	    	    int quantity = 0;
+	    	    int price = 0;
+	    	    while(rs.next()) {
+	    		price  = rs.getInt(1);
+	    		quantity= rs.getInt(2);
+	    	    }
+	    	    int Amount = p.getPrice();
+	    	    int no = Amount/price;
+	    	    quantity = quantity-no;
+			String updatestock = "update  stock set quantity = ?  where stockid ='"+nm+"'";
+			PreparedStatement ps1 = con.prepareStatement(updatestock);
+			ps1.setInt(1, quantity);
+			int y =ps1.executeUpdate();
+			if(y==1) {
+			    System.out.println("Updated quantity in database.");
+			}
+	    	}
 	}
 	
 	
@@ -179,7 +215,6 @@ public class CrudDAO  implements CrudDaoInterface{
 			 id = Integer.parseInt(rs.getString(1));
 		     }
 		     String ordNo = "order"+id;
-//		     con.close();
 		     return ordNo ;
 	    }
 	
@@ -200,7 +235,6 @@ public class CrudDAO  implements CrudDaoInterface{
 			 id = Integer.parseInt(rs.getString(1));
 		     }
 		     String ShipNo = "ShipNo"+id;
-//		     con.close();
 		     return ShipNo ;
 	    }
 	
