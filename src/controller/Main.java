@@ -2,7 +2,6 @@ package controller;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-
 import DAO.CrudDAO;
 import DAO.ProductDAO;
 import DAO.UserDAO;
@@ -21,6 +20,9 @@ public class Main {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	x = Integer.parseInt(br.readLine().trim());
 	
+	////item quatity variable
+	int num=0;
+	
 	String firstname;
 	String lastname;
 	 String email;
@@ -30,7 +32,7 @@ public class Main {
 	 int age;
 	 
 	 /// list for saving cart items 
-	 ArrayList<Product> list = new ArrayList<>();
+	 ArrayList<Product> list = new ArrayList<Product>();
 	// objects
 	User user = new User();
 	ValidateUserFields  valuserfield = new ValidateUserFields ();
@@ -70,7 +72,8 @@ public class Main {
 	    		    age = Integer.parseInt(br.readLine().trim());
 	    	  
 	    		    int userid =  userdao.generateUserId();
-	    		    user.setCustomerId(userid);
+	    		    String custid = userdao.generateCustomerId();
+	    		    user.setCustomerId(custid);
 	    		    user.setUserId(userid);
 	    		    user.setFirstName(firstname);
 	    		    user.setLastName(lastname);
@@ -93,10 +96,8 @@ public class Main {
 			if(verifydao.login(name,pass)) {
 			  
 			    /// getting customer id from table userdetails
-			    int custid = verifydao.loadUserdetails(name,pass);
-			    user.setCustomerId(custid);
-			    user.setUserId(custid);
-			    verifydao.loadCustomerDetails(user);
+			    user = verifydao.loadUserdetails(name,pass);
+			    user = verifydao.loadCustomerDetails(user);
 			    System.out.println("Login successful.");
 			    int X = 0;
 			    do
@@ -106,19 +107,50 @@ public class Main {
 			    System.out.println("2. Go to cart : ");
 			    System.out.println("3. User details and order History : ");
 			     X = Integer.parseInt(br.readLine().trim());
+			  
 			    switch(X){
 				case 1:
-				    /// show products
-				    cruddao.displayProductlist();
-				    System.out.println("Add to Cart Item by name : ");
-				    String nm  = br.readLine().trim();
-				    list = cruddao.addTocart(nm,list);
+				    do {
+					  /// show products
+					    cruddao.displayProductlist();
+					    System.out.println("Add to Cart Item by name : ");
+					    String nm  = br.readLine().trim();
+					    System.out.println("Enter Quantity : ");
+					    num = Integer.parseInt(br.readLine().trim());
+					    list = cruddao.addTocart(nm,list,num);
+					    System.out.print("Want to add more items : ");
+					    yes = br.readLine();
+				    }while(yes.equals("yes"));
 				    break;
 				case 2:
-				    cruddao.displayCart(list);
+				    cruddao.displayCart(list,num);
+				    try {
+					    System.out.println("Want to remove any item ? Enter Item.No.  : ");
+					    int index =Integer.parseInt(br.readLine().trim());
+					   list =  cruddao.removeItem(index,list);
+					}catch(Exception e) {
+					    System.out.println();
+					}
+					System.out.println("Want to place order ? yes/no : ");
+					yes = br.readLine();
+					if(yes.equals("yes")) {
+					    cruddao.placeOrder(list,user.getCustomerId());
+					}
 
+//				    cruddao.shippingDetails(user);
 				    break;
 				case 3:
+				    /// display user details
+				    System.out.println(user.getUserId());
+				    System.out.println(user.getCustomerId());
+				    System.out.println(user.getUserName());
+				    System.out.println(user.getFirstName());
+				    System.out.println(user.getLastName());
+				    System.out.println(user.getEmailadd());
+				    System.out.println(user.getGender());
+				    System.out.println(user.getAge());
+				    System.out.println(user.getAddress());
+				    System.out.println(user.getPassword());
 				    break;
 			    }  
 			    System.out.print("Do you want to continue User?  yes/no : ");
@@ -155,6 +187,8 @@ public class Main {
 				     int  price = Integer.parseInt(br.readLine().trim());
 				     System.out.println("Add Product Description :  ");
 				     String pdes = br.readLine().trim();
+				     System.out.println("Add Product Quatity in Kg  :  ");
+				     int  quantity = Integer.parseInt(br.readLine().trim());
 				     
 				     /// getting product id
 				     String pid = productdao.generateProductId();
@@ -163,7 +197,7 @@ public class Main {
 				     product.setProductName(pname);
 				     product.setDescription(pdes);
 				     /// insert in product table
-				     productdao.addProduct(product);
+				     productdao.addProduct(product,quantity);
 				 }
 				break;
 			    case 2:

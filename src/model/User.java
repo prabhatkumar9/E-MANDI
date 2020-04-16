@@ -3,7 +3,7 @@ package model;
 public class User {
     
     private int userId;
-    private int customerId;
+    private String customerId;
     private String firstName;
     private String lastName;
     private String userName;
@@ -20,11 +20,11 @@ public class User {
     public void setUserId(int userId) {
 	this.userId = userId;
     }
-    public int getCustomerId() {
+    public String getCustomerId() {
 	return customerId;
     }
-    public void setCustomerId(int customerId) {
-	this.customerId = customerId;
+    public void setCustomerId(String custid) {
+	this.customerId = custid;
     }
     public String getUserName() {
 	return userName;

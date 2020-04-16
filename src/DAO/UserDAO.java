@@ -18,7 +18,7 @@ Connection con;
      
      /// inserting into customer table
      PreparedStatement ps1 = con.prepareStatement(insertToCustomer);
-     ps1.setInt(1,user.getCustomerId());
+     ps1.setString(1,user.getCustomerId());
      ps1.setString(2,user.getFirstName());
      ps1.setString(3,user.getLastName());
      ps1.setString(4,user.getEmailadd());
@@ -30,7 +30,7 @@ Connection con;
      /// inserting into userdetails table
      PreparedStatement ps =  con.prepareStatement(insertTouserdetails);
      ps.setInt(1, user.getUserId());
-     ps.setInt(2,user.getCustomerId());
+     ps.setString(2,user.getCustomerId());
      ps.setString(3,user.getUserName());
      ps.setString(4,user.getPassword());
     
@@ -63,6 +63,18 @@ Connection con;
 	 userid = Integer.parseInt(rs.getString(1));
      }
      return userid;
+ }
+ 
+ public String generateCustomerId() throws Exception {
+     String custid = null;
+     String sql = "select count(custid)+1 from customer";
+     con = cm.getConnection();
+     Statement st = con.createStatement();
+     ResultSet rs = st.executeQuery(sql);
+     if(rs.next()) {
+	custid = rs.getString(1);
+     }
+     return custid;
  }
  
 }

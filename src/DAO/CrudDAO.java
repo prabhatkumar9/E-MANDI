@@ -1,11 +1,15 @@
 package DAO;
+import java.sql.Date;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import model.Product;
+import model.User;
 import utility.ConnectionManager;
 
 public class CrudDAO  implements CrudDaoInterface{
@@ -24,42 +28,52 @@ public class CrudDAO  implements CrudDaoInterface{
 	case 1:
 	    System.out.println("Enter New Name  :  ");
 	    String name = br.readLine().trim();
-	    String updateName = "update product set name = "+name+" where id="+proid;
+	    String updateName = "update product set name ='"+name+"' where id='"+proid+"'";
 	    updateDB(updateName);
 	    break;
 	case 2:
 	    System.out.println("Enter New Price  :  ");
 	    int price = Integer.parseInt(br.readLine().trim());
-	    String updatePrice = "update product set price = "+price+" where id="+proid;
+	    String updatePrice = "update product set price = "+price+" where id='"+proid+"'";
 	    updateDB(updatePrice);
 	    break;
 	case 3:
 	    System.out.println("Enter New Description  :  ");
 	    String desc = br.readLine().trim();
-	    String updateDes = "update product set description = "+desc+" where id="+proid;
+	    String updateDes = "update product set description = '"+desc+"' where id='"+proid+"'";
 	    updateDB(updateDes);
 	    break;
 	case 4:
-	    String delete = "delete from product where id = "+proid;
+	    String delete = "delete from product where id = '"+proid+"'";
 	    updateDB(delete);
+	    break;
 	}
     }
     
  public void updateDB(String update) throws Exception {
 	con = cm.getConnection();
 	PreparedStatement ps = con.prepareStatement(update);
-	int x = ps.executeUpdate();
-	if(x==1) {
-	    System.out.println("Updated Successfully.");
-	}
+//	try {
+	    int x = ps.executeUpdate();
+		if(x==1) {
+		    System.out.println("Updated Successfully.");
+		}
+//	}catch(Exception e) {
+//	    System.out.println(e);
+//	}
+ }
+ 
+ public ResultSet  getDB(String sql) throws Exception {
+     	con = cm.getConnection();
+	PreparedStatement ps = con.prepareStatement(sql);
+	ResultSet rs = ps.executeQuery();
+	return rs;
  }
  
     @Override
     public void displayProductlist() throws Exception {
 	String sql = "select * from product";
-	con = cm.getConnection();
-	PreparedStatement ps = con.prepareStatement(sql);
-	ResultSet rs = ps.executeQuery();
+	ResultSet rs = getDB(sql);
 	int srNo = 1;
 	while(rs.next()) {
 	   String id = rs.getString(1);
@@ -69,13 +83,11 @@ public class CrudDAO  implements CrudDaoInterface{
 	   System.out.println(srNo+".\t "+"Product ID :  "+id+"\t\t Product Name :  "+name+"\t\t Price :  "+price+"\t\t Description :  "+desc);
 	   srNo++;
 	}
-	con.close();
     }
 
-    	////add item to cart and display serial no of item.
-	public ArrayList<Product> addTocart(String nm, ArrayList<Product> list) throws Exception {
-//	    ArrayList<Product> list = new ArrayList<>();
-	    String sql = "select * from product where name = '"+nm+"'";
+    
+    public ArrayList<Product> addTocart(String nm, ArrayList<Product> list,int num) throws Exception {
+	    String sql = "select product.id,product.name,product.price,product.description,stock.quantity from product inner join stock on product.name = stock.stockid where product.name='"+nm+"'";
 		con = cm.getConnection();
 		PreparedStatement ps = con.prepareStatement(sql);
 		ResultSet rs = ps.executeQuery();
@@ -84,12 +96,20 @@ public class CrudDAO  implements CrudDaoInterface{
 		   String name = rs.getString(2);
 		   int price = rs.getInt(3);
 		   String desc = rs.getString(4);
-		  list.add(new Product(id,name,price, desc)); 
+		   int qunt = rs.getInt(5);
+		   if(qunt>=num) {
+		       list.add(new Product(id,name,price*num, desc)); 
+		   }else {
+		       System.out.println("Stock not available");
+		   }
 		}
 		return list;
 	}
-  
-	public void displayCart(ArrayList<Product> cartlist) {
+    
+ 
+//	public void displayCart(int num, ArrayList<Product> cartlist)  
+    
+	public void displayCart(ArrayList<Product> cartlist, int num){
 	    try {
 		int lenOfList = cartlist.size();
 		int cartTotal = 0; 
@@ -100,45 +120,88 @@ public class CrudDAO  implements CrudDaoInterface{
 		for (int i = 0; i < lenOfList; i++) {
 			Product product = cartlist.get(i);
 			cartTotal = cartTotal+product.getPrice();
-			System.out.println("**********************************************************");
-			System.out.println("itemNo. : "+(i+n));
-			System.out.println("Product ID    : "+product.getProductId());
-			System.out.println("Product Name     : "+product.getProductName());
-			System.out.println("Product Price  : "+product.getPrice());
-			System.out.println("Description      : "+product.getDescription());
-			System.out.println("**********************************************************");
+			System.out.println("***********************************************************************************************************************************************************************");
+			System.out.println("itemNo. : "+(i+n)+"\tItem : "+num+" Kg. "+product.getProductName()+" \tPrice : "+product.getPrice()/num+"x"+num+" = "+product.getPrice()+" Rs. \tDescription : "+product.getDescription());
+			System.out.println();
 		}
 		/// total amount to pay
 		System.out.println("TOTAL CART VALUE : "+cartTotal);
 		System.out.println();
-		
-		try {
-		    System.out.println("Want to remove any item ? Enter SR.No.  : ");
-		    int index =Integer.parseInt(br.readLine().trim());
-		    removeItem(index,cartlist);
-		}catch(Exception e) {
-		    System.out.println();
-		}
-		String yes;
-		System.out.println("want to place order ? yes/no : ");
-		yes = br.readLine();
-		while(yes.equals("yes")) {
-		    placeOrder(cartlist);
-		}
-
 	}catch(Exception e) {
 		System.out.println("CART IS EMPTY.");
 		System.out.println();
 		}
 	}
 	
-	public void removeItem(int n,ArrayList<Product> cartlist) {
+	public ArrayList<Product> removeItem(int n,ArrayList<Product> cartlist) {
 	    int index = n-1;
 	    cartlist.remove(index);
-	    displayCart(cartlist);
+	    return cartlist;
 	}
 	
-	public void placeOrder(ArrayList<Product> cartlist) {
-	    
+	
+	
+	public void placeOrder(ArrayList<Product> cartlist,String custid) throws Exception {
+	    int cartValue =  0;
+	    LocalDate date = LocalDate.now();
+	    String orderNo = generateOrderNo();
+	    String sql = "insert into orders(orderno,custid,orderdate) values(?,?,?)";
+		 con = cm.getConnection();
+		 PreparedStatement ps = con.prepareStatement(sql);
+		 ps.setString(1, orderNo);
+		 ps.setString(2, custid);
+		 ps.setDate(3,Date.valueOf(date));
+		int y =  ps.executeUpdate();
+		if(y==1) {
+		    System.out.println("Order placed.");
+		}
+		
+		for(int i=0;i<cartlist.size();i++) {
+		 Product item = cartlist.get(i);
+			 cartValue += item.getPrice();
+			 String name = item.getProductName();
+			 String id = item.getProductId();
+			 String desc = item.getDescription();
+			 int itemprice = item.getPrice();
+	
+	    }
 	}
+	
+	
+	/// generate unique order number
+	public String generateOrderNo() throws Exception {
+		 int id = 0;
+		 String sql = "select count(orderno)+1 from orders";
+		     con = cm.getConnection();
+		     Statement st = con.createStatement();
+		     ResultSet rs = st.executeQuery(sql);
+		     if(rs.next()) {
+			 id = Integer.parseInt(rs.getString(1));
+		     }
+		     String ordNo = "order"+id;
+//		     con.close();
+		     return ordNo ;
+	    }
+	
+	/// shippment details
+	public void shippingDetails(User user) {
+	    user.getAddress();
+	    user.getContact();
+	}
+	
+	
+	public String generateShipId() throws Exception {
+		 int id = 0;
+		 String sql = "select count(orderno)+1 from orders";
+		     con = cm.getConnection();
+		     Statement st = con.createStatement();
+		     ResultSet rs = st.executeQuery(sql);
+		     if(rs.next()) {
+			 id = Integer.parseInt(rs.getString(1));
+		     }
+		     String ShipNo = "ShipNo"+id;
+//		     con.close();
+		     return ShipNo ;
+	    }
+	
 }

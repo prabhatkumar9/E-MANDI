@@ -11,7 +11,8 @@ public class ProductDAO {
     ConnectionManager cm = new ConnectionManager();
     Connection con;
     
-    public void addProduct(Product product) throws Exception {
+    public void addProduct(Product product, int quantity) throws Exception {
+	addStock(product,quantity);
 	con = cm.getConnection();
 	String  insertProduct = "insert into product(id,name,price, description) values(?,?,?,?)";
 	 PreparedStatement ps = con.prepareStatement(insertProduct);
@@ -26,6 +27,24 @@ public class ProductDAO {
 	     System.out.println("Error in adding products.");
 	 }
 	 con.close();
+    }
+    
+    public void addStock(Product product, int quantity) throws Exception {
+	String insertStock = "insert into stock(stockid,quantity) values(?,?)";
+	con = cm.getConnection();
+	PreparedStatement ps = con.prepareStatement(insertStock);
+	String stockid = product.getProductName();
+	
+	try {
+	    	ps.setString(1, stockid);
+	    	ps.setInt(2, quantity);
+		ps.executeUpdate();
+	}catch(Exception e) {
+	    String updateStock = "update stock set quantity = "+quantity+"where stockid = "+stockid;
+	    PreparedStatement ps1 = con.prepareStatement(updateStock);
+	    ps1.setInt(1, quantity);
+	}
+	
     }
     
     public String generateProductId() throws Exception {

@@ -29,13 +29,15 @@ productid varchar(20),
 quantity number(20) not null ,
 FOREIGN key (productid) references product(id));
 desc stock;
+insert into stock(stockid,quantity) values('st2',10);
 
 
 create table orders(orderno varchar(20) primary key not null,
-custid VARCHAR(50) not null,
+custid int not null,
 orderdate date,
 FOREIGN key (custid) references customer(custid));
 desc orders;
+
 
 create table  orderdetails(productid varchar(50),
 orderid varchar(20),
@@ -70,3 +72,4 @@ select * from shipment;
 select * from payment;
 
 select * from product where name = 'Rice';
+delete orders  where custid = 1;
