@@ -13,12 +13,10 @@ import service.ValidateUserFields;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-	System.out.println("1. Register Here.");
-	System.out.println("2. Login");
-	System.out.println("3. Admin Login");
+	
 	int x;
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	x = Integer.parseInt(br.readLine().trim());
+	
 	
 	////item quantity variable
 	int num=0;
@@ -26,6 +24,8 @@ public class Main {
 	 String nm   = null;
 	 //// updated quantity
 	 int quantity;
+	 //// order id or no.
+	 String orderId ;
 	
 	String firstname;
 	String lastname;
@@ -48,8 +48,11 @@ public class Main {
 	
 	
 	String yes = null;
-	do {
-	    
+	do { 
+	    	System.out.println("1. Register Here.");
+		System.out.println("2. Login");
+		System.out.println("3. Admin Login");
+		x = Integer.parseInt(br.readLine().trim());
 	switch(x) {
 		case 1:
 	    		System.out.println("Select  Your UserName : ");
@@ -122,12 +125,12 @@ public class Main {
 					    System.out.println("Enter Quantity : ");
 					    num = Integer.parseInt(br.readLine().trim());
 					    list = cruddao.addTocart(nm,list,num);
-					    System.out.print("Want to add more items : ");
+					    System.out.print("Want to add more items ? yes/no : ");
 					    yes = br.readLine();
 				    }while(yes.equals("yes"));
 				    break;
 				case 2:
-				   cruddao.displayCart(list);
+				   int CartValue = cruddao.displayCart(list);
 				    try {
 					    System.out.println("Want to remove any item ? Enter Item.No.  : ");
 					    int index =Integer.parseInt(br.readLine().trim());
@@ -138,24 +141,21 @@ public class Main {
 					System.out.println("Want to place order ? yes/no : ");
 					yes = br.readLine();
 					if(yes.equals("yes")) {
-					    cruddao.placeOrder(list,user.getCustomerId());
-					    cruddao.updateStock(list);
+					    orderId = cruddao.placeOrder(list,user.getCustomerId());
+					    cruddao.updateStock(list,orderId);
+					    String shipId = cruddao.generateShipId();
+					    cruddao.shippingDetails(user,orderId,shipId);
+					    System.out.println("Select Payment type : card / cash on delivery(cod) / wallet ? : ");
+					    String type = br.readLine().trim();
+					    String inv = cruddao.generateInvoice();
+					    cruddao.payment(type,inv,orderId,CartValue);
 					}
 
 //				    cruddao.shippingDetails(user);
 				    break;
 				case 3:
 				    /// display user details
-				    System.out.println(user.getUserId());
-				    System.out.println(user.getCustomerId());
-				    System.out.println(user.getUserName());
-				    System.out.println(user.getFirstName());
-				    System.out.println(user.getLastName());
-				    System.out.println(user.getEmailadd());
-				    System.out.println(user.getGender());
-				    System.out.println(user.getAge());
-				    System.out.println(user.getAddress());
-				    System.out.println(user.getPassword());
+				    userdao.fetchUserDetailsOrderHistory(user.getCustomerId());
 				    break;
 			    }  
 			    System.out.print("Do you want to continue User?  yes/no : ");
@@ -218,12 +218,12 @@ public class Main {
 			    yes = br.readLine();
 			}while(yes.equals("yes"));
 			}
-			
 		      break;
 	    		}
 	 System.out.print("Do you want to continue Login Page ? yes/no: ");
 	yes = br.readLine();
 	}while(yes.equals("yes"));
+	
 	}
     }	
 	

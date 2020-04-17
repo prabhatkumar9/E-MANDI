@@ -54,23 +54,56 @@ orderid varchar(20),
 FOREIGN key (orderid)REFERENCES orders(orderno));
 desc shipment;
 
-create table payment(payno varchar(20) primary key,
-type varchar(20),
-paydate date,
-amount varchar(20) not null,
-orderid varchar(20),
-FOREIGN key (orderid) REFERENCES orders(orderno));
+--create table payment(payno varchar(20) primary key,
+--type varchar(20),
+--paydate date,
+--amount varchar(20) not null,
+--orderid varchar(20),
+--FOREIGN key (orderid) REFERENCES orders(orderno));
 desc payment;
+--
+--
+--delete from product where id = 'prod2';
+--insert into product values('prod1','cheese',90,'cheesse');
+--select quantity from stock where stockid='rice';
 
+
+
+desc orders;
+ALTER TABLE orders
+ drop column quantity; 
+--delete from orders where custid=1;
+--delete from stock;
+
+select * from orders;
 select * from customer;
 select * from userdetails1;
 select * from product;
-select * from stock;
-select * from orders;
 select * from orderdetails;
 select * from shipment;
 select * from payment;
+select * from stock;
 
-select product.id,product.name,product.price,product.description,stock.quantity from product inner join stock on product.name = stock.stockid
-where product.name='rice';
-delete orders  where custid = 1;
+--select product.id,product.name,product.price,product.description,stock.quantity from product inner join stock on product.name = stock.stockid
+--where product.name='rice';
+--
+--select product.price,stock.quantity from product inner join stock on product.name=stock.stockid where product.name='rice';
+--
+--delete orders  where custid = 1;
+
+
+
+select userdetails1.username, userdetails1.password,
+customer.firstname, customer.lastname ,customer.email, customer.age, customer.gender,
+orders.orderno,orderdetails.productid, orderdetails.quantity,product.name,product.price,
+shipment.address, shipment.shipdate, shipment.contact,
+payment.payno, payment.type, payment.paydate, payment.amount
+from userdetails1
+inner join customer on userdetails1.custid = customer.custid
+inner join orders on customer.custid = orders.custid
+inner join orderdetails on orders.orderno = orderdetails.orderid
+inner join product on orderdetails.productid = product.id
+inner join shipment on orderdetails.orderid = shipment.orderid
+inner join payment on shipment.orderid = payment.orderid
+where custid = 1;
+

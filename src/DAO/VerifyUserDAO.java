@@ -6,22 +6,31 @@ import model.User;
 import utility.ConnectionManager;
 public class VerifyUserDAO {
 
+    // verify existing user
     public boolean login(String name,String pass) throws Exception {
 	ConnectionManager con = new ConnectionManager();
 	Statement st = con.getConnection().createStatement();
-	ResultSet rs = st.executeQuery("SELECT * from USERDETAILS1");
-	while(rs.next()) {
-		if(name.equals(rs.getString("USERNAME")) && pass.equals(rs.getString("PASSWORD"))) {
-			con.getConnection().close();
-			return true;
-		}else {
-			con.getConnection().close();
-			return false;
-		}
-	}
+	ResultSet rs = st.executeQuery("SELECT username,password from USERDETAILS1");
+	String username ;
+	String password ;
+	    try {
+		while(rs.next()) {
+		username = rs.getString("username");
+		     password = rs.getString("password");
+			if(username.equals(name) && password.equals(pass)) {
+				return true;
+				}
+			}
+	    }catch(Exception e){
+		con.getConnection().close();
+	    }
+	    finally {
+		con.getConnection().close();
+	    }    
 	return false;
 }
     
+    // fetch user details from database table
     public User loadUserdetails(String name , String pass) throws SQLException, Exception {
 	String custid = null;
 	int userid = 0;
@@ -42,9 +51,9 @@ public class VerifyUserDAO {
 	return user;
     }
     
+    // setting user details to user class
     public User loadCustomerDetails(User user) throws Exception {
 	String custid = user.getCustomerId();
-//	System.out.println("in loadcustomer  "+custid);
 	ConnectionManager con = new ConnectionManager();
 	Statement st = con.getConnection().createStatement();
 	ResultSet rs = st.executeQuery("select custid,firstname,lastname,email,address,gender,age,contact from customer where custid = "+custid);

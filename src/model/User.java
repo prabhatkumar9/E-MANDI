@@ -1,7 +1,6 @@
 package model;
 
 public class User {
-    
     private int userId;
     private String customerId;
     private String firstName;
