@@ -33,26 +33,34 @@ public class CrudDAO  implements CrudDaoInterface{
 	int choice = Integer.parseInt(br.readLine().trim());
 	switch(choice) {
 	case 1:
+	    // update name
 	    System.out.println("Enter New Name  :  ");
 	    String name = br.readLine().trim();
 	    String updateName = "update product set name ='"+name+"' where id='"+proid+"'";
 	    updateDB(updateName);
 	    break;
 	case 2:
+	    // update price
 	    System.out.println("Enter New Price  :  ");
 	    int price = Integer.parseInt(br.readLine().trim());
 	    String updatePrice = "update product set price = "+price+" where id='"+proid+"'";
 	    updateDB(updatePrice);
 	    break;
 	case 3:
+	    // update description
 	    System.out.println("Enter New Description  :  ");
 	    String desc = br.readLine().trim();
 	    String updateDes = "update product set description = '"+desc+"' where id='"+proid+"'";
 	    updateDB(updateDes);
 	    break;
 	case 4:
-	    String delete = "delete from product where id = '"+proid+"'";
-	    updateDB(delete);
+	    // delete item
+	    try {
+		String delete = "delete from product where id = '"+proid+"'";
+		    updateDB(delete);
+	    }catch(Exception e) {
+		System.out.println("Item cannot be deleted because of maintaining order history.");
+	    }
 	    break;
 	}
     }
@@ -86,9 +94,12 @@ public class CrudDAO  implements CrudDaoInterface{
 	   String name = rs.getString(2);
 	   int price = rs.getInt(3);
 	   String desc = rs.getString(4);
+	   System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------");
 	   System.out.println(srNo+".\t "+"Product ID :  "+id+"\t\t Product Name :  "+name+"\t\t Price :  "+price+"\t\t Description :  "+desc);
 	   srNo++;
 	}
+	   System.out.println();
+	   System.out.println("--------------------------------------------------------------------------------------------------------------------------------------------------");
     }
 
     
@@ -109,7 +120,7 @@ public class CrudDAO  implements CrudDaoInterface{
 		   }
 		}
 		return list;
-	}
+    }
     
   
     // display user's cart and its item in cart
@@ -132,11 +143,12 @@ public class CrudDAO  implements CrudDaoInterface{
 			 while(rs.next()) {
 			     itemprice = rs.getInt(1);
 			 }
-			System.out.println("***********************************************************************************************************************************************************************");
+			System.out.println("___________________________________________________________________________________________________________________________________________________________________________");
 			System.out.println("itemNo. : "+(i+n)+"\tItem : " +product.getPrice()/itemprice+" Kg. "+product.getProductName()+" \tPrice : "+product.getPrice()/itemprice+"x"+itemprice+" = "+product.getPrice()+" Rs. \tDescription : "+product.getDescription());
-			System.out.println();
+			
 		}
 		/// total amount to pay
+		System.out.println();
 		System.out.println("TOTAL CART VALUE : "+cartTotal);
 		System.out.println();
 	    	}catch(Exception e) {
@@ -158,22 +170,22 @@ public class CrudDAO  implements CrudDaoInterface{
     public String placeOrder(ArrayList<Product> cartlist,String custid) throws Exception {
 	    LocalDate date = LocalDate.now();
 	    String orderNo = generateOrderNo();
-	    String sql = "insert into orders(orderno,custid,orderdate) values(?,?,?)";
+	    String sql = "insert into orders(orderno,customerid,orderdate) values(?,?,?)";
 		 con = cm.getConnection();
 		 PreparedStatement ps = con.prepareStatement(sql);
 		 ps.setString(1, orderNo);
 		 ps.setString(2, custid);
 		 ps.setDate(3,Date.valueOf(date));
 		int y =  ps.executeUpdate();
-		if(y==1) {
-		    System.out.println("Order placed Successfuly.");
-		}
+//		if(y==1) {
+//		    System.out.println("Order placed Successfuly.");
+//		}
 		return orderNo;
 	}
     
     //generate pdf bill
     public void pdfBillGeneration(ArrayList<Product> cartlist,User user) throws FileNotFoundException, DocumentException {
-//	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");  
+
 	LocalDate date = LocalDate.now(); 
 	LocalDate bdate = (date);  
 	Document document = new Document();
@@ -183,7 +195,7 @@ public class CrudDAO  implements CrudDaoInterface{
 	String fno = user.getContact();
 	String add = user.getAddress();
 	int billno = 1;
-	PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\Prabhat\\Bill"+custid+billno+".pdf"));
+	PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\PrabhatVisvakarma\\eclipse-workspace\\E-MANDI_"+custid+billno+".pdf"));
 	document.open();
 	/// attributes
 			document.addAuthor("E-MANDI ONLINE WHOLESALE MARKET");
@@ -209,7 +221,7 @@ public class CrudDAO  implements CrudDaoInterface{
 			    while(rs.next()) {
 				     itemprice = rs.getInt(1);
 				 }
-				document.add(new Paragraph("itemNo. : "+(i+n)+"\tItem : " +product.getPrice()/itemprice+" Kg. "+product.getProductName()+" \t\tPrice : "+product.getPrice()/itemprice+"x"+itemprice+" = "+product.getPrice()+" Rs. \tDescription : "+product.getDescription()));
+				document.add(new Paragraph("itemNo. "+(i+n)+"\t \t Item :  " +product.getPrice()/itemprice+" Kg. "+product.getProductName()+" \t\tPrice : "+product.getPrice()/itemprice+"x"+itemprice+" = "+product.getPrice()+" Rs. \t\t Description : "+product.getDescription()));
 				document.add(new Paragraph(" "));
 			}
 			document.add(new Paragraph("**********************************************************"));
@@ -255,9 +267,9 @@ public class CrudDAO  implements CrudDaoInterface{
 	    	    PreparedStatement ps1 = con.prepareStatement(updatestock);
 	    	    ps1.setInt(1, quantity);
 	    	    int y =ps1.executeUpdate();
-	    	    if(y==1) {
-			    System.out.println("Updated quantity in database.");
-			}
+//	    	    if(y==1) {
+//			    System.out.println("Updated quantity in database.");
+//			}
 	    	    /// update table orderdetails
 	    	    InsertOrderDetails(prodid,orderNo,no);
 	    	}
@@ -272,9 +284,9 @@ public class CrudDAO  implements CrudDaoInterface{
     	    ps2.setString(2, orderNo);
     	    ps2.setInt(3, no);
     	    int y = ps2.executeUpdate();
-    	    if(y==1) {
-    		System.out.println("update orderdetails.");
-    	    }
+//    	    if(y==1) {
+//    		System.out.println("update orderdetails.");
+//    	    }
 	}
 	
     // generate unique order number to link with placed order  
@@ -294,7 +306,7 @@ public class CrudDAO  implements CrudDaoInterface{
 	    LocalDate shipdate = LocalDate.now();
 	    String shippingAddress = user.getAddress();
 	    String contactNumber = user.getContact();
-	    String sql = "insert into shipment(id,address,shipdate,contact,orderid) values(?,?,?,?,?)";
+	    String sql = "insert into shipment(id,address,shipdate,contact,ordrid) values(?,?,?,?,?)";
 	    PreparedStatement ps = con.prepareStatement(sql);
 	    ps.setString(1, shipid);
 	    ps.setString(2, shippingAddress);

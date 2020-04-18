@@ -106,6 +106,7 @@ Connection con;
      System.out.println("Contact Number : "+contact);
      System.out.println("Address : "+add); 
      System.out.println("Password : "+pass);
+     System.out.println();	
      System.out.println("|=============================================================================|");
      System.out.println();	
      }
@@ -143,7 +144,7 @@ Connection con;
 	     quant = rs1.getInt(4);
 	 System.out.println();
 	 System.out.println("Order Id : "+ordid+"\t\t Product Id : "+prodid+"\t\t Product name : "+pname+"\t\t Price : "+prdprice+"\t Quantity : "+quant+" kg.");
-	 System.out.println();
+	 
 	 
 	 String getPayDetails = "select payment.amount,payment.payno,payment.type,payment.paydate,\r\n" + 
 	 	"shipment.contact,shipment.address,shipment.shipdate\r\n" + 
@@ -161,7 +162,8 @@ Connection con;
 //	     shipdate = rs.getDate(7).toLocalDate();
 	 }
      }
-     System.out.println("---------------------------------  Total amount : "+totalamount+"\t\t Invoice : "+invono+"  ---------------------------------");
+	 System.out.println();	
+     System.out.println("---------------------------------  Total amount : "+totalamount+"\t\t Invoice Number : "+invono+"  ---------------------------------");
      System.out.println("");
      System.out.println("\t\t Payment Date : "+paydate+"\t\t Type of Payment : "+ptype+"\t\t Shiping Date : "+shipdate);
      System.out.println();	
@@ -169,7 +171,6 @@ Connection con;
      System.out.println();	
      System.out.println("|=============================================================================|");
  }
-//     System.out.println("|=============================================================================|");
  }
      
 }

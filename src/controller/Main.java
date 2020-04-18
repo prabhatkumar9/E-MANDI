@@ -17,16 +17,16 @@ public class Main {
 	int x;
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	
-	
-	////item quantity variable
+	//item quantity variable
 	int num=0;
-	//// name of item 
+	// name of item 
 	 String nm   = null;
-	 //// updated quantity
+	 // updated quantity
 	 int quantity;
-	 //// order id or no.
+	 // order id or no.
 	 String orderId ;
 	
+	 // initial variables
 	String firstname;
 	String lastname;
 	 String email;
@@ -35,7 +35,7 @@ public class Main {
 	 String address;
 	 int age;
 	 
-	 /// list for saving cart items 
+	 // list for saving cart items 
 	 ArrayList<Product> list = new ArrayList<Product>();
 	// objects
 	User user = new User();
@@ -45,15 +45,14 @@ public class Main {
 	 Product product = new Product();
 	 ProductDAO productdao = new ProductDAO();
 	 CrudDAO cruddao = new CrudDAO();
-	
-//	try {
 	    
-	
+	 System.out.println("============= WELCOME TO ONLINE WHOLESALE MARKET =============");
+	 System.out.println();
 	String yes = null;
 	do { 
-	    	System.out.println("1. Register Here.");
-		System.out.println("2. Login");
-		System.out.println("3. Admin Login");
+	    	System.out.println("\t\t 1. Register Here.");
+		System.out.println("\t\t 2. Login");
+		System.out.println("\t\t 3. Admin Login");
 		x = Integer.parseInt(br.readLine().trim());
 	switch(x) {
 		case 1:
@@ -80,8 +79,11 @@ public class Main {
 	    		    System.out.println("Enter Your Age : ");
 	    		    age = Integer.parseInt(br.readLine().trim());
 	    	  
+	    		    // generate user id
 	    		    int userid =  userdao.generateUserId();
+	    		    // generate customer id
 	    		    String custid = userdao.generateCustomerId();
+	    		    // setting the user details in user model class
 	    		    user.setCustomerId(custid);
 	    		    user.setUserId(userid);
 	    		    user.setFirstName(firstname);
@@ -111,50 +113,55 @@ public class Main {
 			    int X = 0;
 			    do
 				{
-			    System.out.println("Choose options : ");
-			    System.out.println("1. Home Page : ");
-			    System.out.println("2. Go to cart : ");
-			    System.out.println("3. User details and order History : ");
+				System.out.println();
+			    System.out.println("\t\t Choose options : ");
+			    System.out.println("\t\t 1. Home Page : ");
+			    System.out.println("\t\t 2. Go to cart : ");
+			    System.out.println("\t\t 3. User details and order History : ");
 			     X = Integer.parseInt(br.readLine().trim());
+			     System.out.println();
 			  
 			    switch(X){
 				case 1:
 				    do {
 					  /// show products
 					    cruddao.displayProductlist();
-					    System.out.println("Add to Cart Item by name : ");
+					    try {
+					    System.out.print("Add to Cart Item by name :     ");
 					    nm  = br.readLine().trim();
-					    System.out.println("Enter Quantity : ");
+					    System.out.print("Enter Quantity :      ");
 					    num = Integer.parseInt(br.readLine().trim());
 					    list = cruddao.addTocart(nm,list,num);
-					    System.out.print("Want to add more items ? yes/no : ");
+					    }catch(Exception e) {
+						System.out.println("Wrong Input ....not Match with items..");
+					    }
+					    System.out.print("\t\t Want to add more items ? yes/no : ");
 					    yes = br.readLine();
 				    }while(yes.equals("yes"));
 				    break;
 				case 2:
 				   int CartValue = cruddao.displayCart(list);
 				    try {
-					    System.out.println("Want to remove any item ? Enter Item.No.  : ");
+					    System.out.print("\t\t Want to remove any item ? Enter Item.No.  : ");
 					    int index =Integer.parseInt(br.readLine().trim());
 					   list =  cruddao.removeItem(index,list);
 					}catch(Exception e) {
 					    System.out.println();
 					}
-					System.out.println("Want to place order ? yes/no : ");
+					System.out.print("\t \t Want to place order ? yes/no : ");
 					yes = br.readLine();
 					if(yes.equals("yes")) {
+					    System.out.print("\t Select Payment type : card / cash on delivery(cod) / wallet ? :     ");
+					    String type = br.readLine().trim();
 					    orderId = cruddao.placeOrder(list,user.getCustomerId());
 					    cruddao.updateStock(list,orderId);
 					    String shipId = cruddao.generateShipId();
 					    cruddao.shippingDetails(user,orderId,shipId);
-					    System.out.println("Select Payment type : card / cash on delivery(cod) / wallet ? : ");
-					    String type = br.readLine().trim();
 					    String inv = cruddao.generateInvoice();
 					    cruddao.payment(type,inv,orderId,CartValue);
 					    cruddao.pdfBillGeneration(list, user);
+					    list.clear();
 					}
-
-//				    cruddao.shippingDetails(user);
 				    break;
 				case 3:
 				    /// display user details
@@ -162,7 +169,7 @@ public class Main {
 				    userdao.fetchOrderHistory(user.getCustomerId());
 				    break;
 			    }  
-			    System.out.print("Do you want to continue User?  yes/no : ");
+			    System.out.print("\t \t Do you want to continue UserPage ?   yes/no   :     ");
 			    yes = br.readLine();
 			} while(yes.equals("yes"));
 			}else {
@@ -171,32 +178,33 @@ public class Main {
 			
 			break;
 		  case 3:
-		      	System.out.println("Enter Admin username : ");
+		      	System.out.print("Enter Admin username :    ");
 			String adminName = br.readLine().trim();
-			System.out.println("Enter Admin password : ");
+			System.out.print("Enter Admin password :    ");
 			String AdminPass = br.readLine().trim();
 			if(verifydao.login(adminName, AdminPass))
 			{
 			    do
 			    {
-			    System.out.println("Admin Login Successfull. ");
-			    System.out.println("Choose options : ");
-			    System.out.println("1. Add Product. ");
-			    System.out.println("2. Delete Product or Update.");
+			    System.out.println("****************Admin Login Successfull**************** ");
+			    System.out.println("\t Choose options : ");
+			    System.out.println("\t 1. Add Product. ");
+			    System.out.println("\t 2. Delete Product or Update.");
 			    int  A = Integer.parseInt(br.readLine().trim());
 			  
 			    switch(A) {
 			    case 1:
-				 System.out.println("Enter nunber of products you want to add : ");
+				try {
+				 System.out.print("Enter nunber of products you want to add :  ");
 				 int  n = Integer.parseInt(br.readLine().trim());
 				 for(int i=0;i<n;i++) {
-				     System.out.println("Enter Product Name : ");
+				     System.out.print("Enter Product Name :    ");
 				     String pname = br.readLine().trim();
-				     System.out.println("Add Product Price :  ");
+				     System.out.print("Add Product Price :    ");
 				     int  price = Integer.parseInt(br.readLine().trim());
-				     System.out.println("Add Product Description :  ");
+				     System.out.print("Add Product Description :    ");
 				     String pdes = br.readLine().trim();
-				     System.out.println("Add Product Quatity in Kg  :  ");
+				     System.out.print("Add Product Quatity in Kg  :    ");
 				     quantity = Integer.parseInt(br.readLine().trim());
 				     
 				     /// getting product id
@@ -208,34 +216,34 @@ public class Main {
 				     /// insert in product table
 				     productdao.addProduct(product,quantity);
 				 }
+			    }catch(Exception e){
+				System.out.println("\t Please Enter valid Input.");
+			    }
 				break;
 			    case 2:
+				try {
 				//displayproduct list AND update product
 				cruddao.displayProductlist();
 				System.out.println("ENTER PRODUCT_ID TO UPDATE OR DELETE PRODUCT .");
 				String proid = br.readLine().trim();
-				System.out.println("");
+				System.out.println();
 				cruddao.updateProduct(proid);
+				}catch(Exception e) {
+				    System.out.println("\t Invalid Input");
+				}
 				break;
 			    }  
-			    System.out.print("Do you want to continue  Admin Pannel ? yes/no: ");
+			    System.out.print("\t Do you want to continue  Admin Pannel ? yes/no:    ");
 			    yes = br.readLine();
 			}while(yes.equals("yes"));
 			}
 		      break;
 	    		}
-	 System.out.print("Do you want to continue Login Page ? yes/no: ");
+	 System.out.print(" \t Do you want to continue Login Page ? yes/no:    ");
 	yes = br.readLine();
 	}while(yes.equals("yes"));
-	
-//	}catch(Exception e) {
-//	    System.out.println("-*-----------ThankYou for Visiting.------------*");
-//	}
-	
-	
-	
-	
-	
+	System.out.println();
+	System.out.println("***************** THANKYOU FOR VISITING *****************");
 	}
     }	
 	
