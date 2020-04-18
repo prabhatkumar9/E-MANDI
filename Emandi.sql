@@ -92,18 +92,48 @@ select * from stock;
 --delete orders  where custid = 1;
 
 
-
+--user details 1st step
 select userdetails1.username, userdetails1.password,
-customer.firstname, customer.lastname ,customer.email, customer.age, customer.gender,
-orders.orderno,orderdetails.productid, orderdetails.quantity,product.name,product.price,
-shipment.address, shipment.shipdate, shipment.contact,
-payment.payno, payment.type, payment.paydate, payment.amount
+customer.firstname,customer.lastname,customer.email,customer.age,customer.gender,customer.address
 from userdetails1
-inner join customer on userdetails1.custid = customer.custid
-inner join orders on customer.custid = orders.custid
+inner join customer on userdetails1.customerid = customer.custid
+where custid = 1;
+--
+--ALTER table payment
+--RENAME COLUMN orderid TO ordid;
+
+--2nd step
+select orders.orderno,orderdate
+from orders where customerid = 1;
+--use rs.next and inner loop
+
+--3rd step
+--product details
+select orderdetails.productid,product.name,product.price,orderdetails.quantity
+from orderdetails
+inner join product on orderdetails.productid = product.id 
+where orderdetails.orderid='order5';
+
+--4th step
+--shipment
+select payment.amount,payment.payno,payment.type,payment.paydate,
+shipment.contact,shipment.address,shipment.shipdate
+from shipment inner join payment on payment.ordid = shipment.ordrid
+where ordrid='order5';
+
+
+----payment details
+--select payno,type,paydate,amount from payment where ordid = 'order5';
+
+--order details
+select orders.orderno,payment.amount,
+payment.type,payment.payno, payment.paydate,
+shipment.shipdate, shipment.contact
+from orders
 inner join orderdetails on orders.orderno = orderdetails.orderid
 inner join product on orderdetails.productid = product.id
-inner join shipment on orderdetails.orderid = shipment.orderid
-inner join payment on shipment.orderid = payment.orderid
-where custid = 1;
+inner join shipment on orderdetails.orderid = shipment.ordrid
+inner join payment on shipment.ordrid = payment.ordid
+where customerid = 1;
 
+desc orders;

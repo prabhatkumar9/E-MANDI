@@ -1,12 +1,16 @@
 package DAO;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.sql.Date;
@@ -162,23 +166,71 @@ public class CrudDAO  implements CrudDaoInterface{
 		 ps.setDate(3,Date.valueOf(date));
 		int y =  ps.executeUpdate();
 		if(y==1) {
-		    System.out.println("Order placed.");
+		    System.out.println("Order placed Successfuly.");
 		}
-		 
-		///display order pdf
-		 int cartValue =  0;
-		for(int i=0;i<cartlist.size();i++) {
-		    	 Product item = cartlist.get(i);
-			 cartValue += item.getPrice();
-			 String name = item.getProductName();
-			 String id = item.getProductId();
-			 String desc = item.getDescription();
-			 int itemprice = item.getPrice();
-			}
-		System.out.println("Total cart value = "+cartValue);
-		//////////////////////
 		return orderNo;
 	}
+    
+    //generate pdf bill
+    public void pdfBillGeneration(ArrayList<Product> cartlist,User user) throws FileNotFoundException, DocumentException {
+//	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");  
+	LocalDate date = LocalDate.now(); 
+	LocalDate bdate = (date);  
+	Document document = new Document();
+	String custid = user.getCustomerId();
+	String name = user.getFirstName()+" "+user.getLastName();
+	String mail = user.getEmailadd();
+	String fno = user.getContact();
+	String add = user.getAddress();
+	int billno = 1;
+	PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\Prabhat\\Bill"+custid+billno+".pdf"));
+	document.open();
+	/// attributes
+			document.addAuthor("E-MANDI ONLINE WHOLESALE MARKET");
+			document.addCreationDate();
+			document.addCreator("E-MANDI");
+			document.addTitle("SHOPPING BILL");
+		try {
+			int lenOfList = cartlist.size();
+			int cartTotal = 0; 
+			int n = 1;
+			document.add(new Paragraph("Customer's bill copy"));
+			document.add(new Paragraph(" "));
+			document.add(new Paragraph("============================================="));
+			document.add(new Paragraph("ITEMS : "));
+			document.add(new Paragraph(" "));
+			for (int i = 0; i < lenOfList; i++) {
+			    Product product = cartlist.get(i);
+			    String pid = product.getProductId();
+			    cartTotal = cartTotal+product.getPrice();
+			    int itemprice = 0;
+			    String sql = "select price from product where id = '"+pid+"'";
+			    ResultSet rs = getDB(sql);
+			    while(rs.next()) {
+				     itemprice = rs.getInt(1);
+				 }
+				document.add(new Paragraph("itemNo. : "+(i+n)+"\tItem : " +product.getPrice()/itemprice+" Kg. "+product.getProductName()+" \t\tPrice : "+product.getPrice()/itemprice+"x"+itemprice+" = "+product.getPrice()+" Rs. \tDescription : "+product.getDescription()));
+				document.add(new Paragraph(" "));
+			}
+			document.add(new Paragraph("**********************************************************"));
+			/// total amount to pay
+			document.add(new Paragraph(" "));
+			document.add(new Paragraph("PAID AMOUNT           :       "+cartTotal));
+			document.add(new Paragraph(" "));
+			document.add(new Paragraph("CUSTOMER NAME     : "+name));
+			document.add(new Paragraph("EMAIL Address            : "+mail));
+			document.add(new Paragraph("Mobile Number            : "+fno));
+			document.add(new Paragraph("SHIPPING ADDRESS : "+add));
+			document.add(new Paragraph("***********************************************************"));
+			document.add(new Paragraph(" "));
+			document.add(new Paragraph("DATE               : "+bdate));
+		}catch(Exception e) {
+			System.out.println(e);
+		}finally{
+			billno++;
+			document.close();
+			writer.close();
+    }}
 	
     // update  stock details after order placed
     public void updateStock(ArrayList<Product> cartlist,String orderNo) throws Exception {

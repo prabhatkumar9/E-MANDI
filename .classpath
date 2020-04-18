@@ -7,5 +7,11 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/ojdbc6.jar"/>
+	<classpathentry kind="lib" path="C:/org.fastcode_2.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/poi-3.17.jar"/>
+	<classpathentry kind="lib" path="C:/poi-ooxml-3.17.jar"/>
+	<classpathentry kind="lib" path="C:/poi-ooxml-schemas-3.7.jar"/>
+	<classpathentry kind="lib" path="C:/xmlbeans-2.6.0.jar"/>
+	<classpathentry kind="lib" path="C:/itextpdf-5.4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

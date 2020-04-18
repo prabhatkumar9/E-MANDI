@@ -46,6 +46,8 @@ public class Main {
 	 ProductDAO productdao = new ProductDAO();
 	 CrudDAO cruddao = new CrudDAO();
 	
+//	try {
+	    
 	
 	String yes = null;
 	do { 
@@ -149,13 +151,15 @@ public class Main {
 					    String type = br.readLine().trim();
 					    String inv = cruddao.generateInvoice();
 					    cruddao.payment(type,inv,orderId,CartValue);
+					    cruddao.pdfBillGeneration(list, user);
 					}
 
 //				    cruddao.shippingDetails(user);
 				    break;
 				case 3:
 				    /// display user details
-				    userdao.fetchUserDetailsOrderHistory(user.getCustomerId());
+				    userdao.fetchUserDetails(user.getCustomerId());
+				    userdao.fetchOrderHistory(user.getCustomerId());
 				    break;
 			    }  
 			    System.out.print("Do you want to continue User?  yes/no : ");
@@ -223,6 +227,14 @@ public class Main {
 	 System.out.print("Do you want to continue Login Page ? yes/no: ");
 	yes = br.readLine();
 	}while(yes.equals("yes"));
+	
+//	}catch(Exception e) {
+//	    System.out.println("-*-----------ThankYou for Visiting.------------*");
+//	}
+	
+	
+	
+	
 	
 	}
     }	

@@ -37,7 +37,7 @@ public class VerifyUserDAO {
 	User user = new User();
 	ConnectionManager con = new ConnectionManager();
 	Statement st = con.getConnection().createStatement();
-	ResultSet rs = st.executeQuery("select userid,custid from userdetails1 where username = '"+name+"' and password = '"+pass+"'");
+	ResultSet rs = st.executeQuery("select userid,CUSTOMERID from userdetails1 where username = '"+name+"' and password = '"+pass+"'");
 	while(rs.next())
 	{ 	
 	    userid = rs.getInt(1);
