@@ -56,27 +56,27 @@ public class Main {
 		x = Integer.parseInt(br.readLine().trim());
 	switch(x) {
 		case 1:
-	    		System.out.println("Select  Your UserName : ");
+	    		System.out.print("\t Select  Your UserName : ");
 	    		String username = br.readLine().trim();
-	    		System.out.println("Select  Your Password : ");
+	    		System.out.print("\t Select  Your Password : ");
 	    		String password = br.readLine().trim();
 	    		boolean valuser = valuserfield.newRegistration(username, password);
 	    		if(valuser) {
 	    		    user.setUserName(username);
 	    		    user.setPassword(password);
-	    		    System.out.println("Enter Your FirstName : ");
+	    		    System.out.print("\t Enter Your FirstName : ");
 	    		    firstname = br.readLine().trim();
-	    		    System.out.println("Enter Your LatName : ");
+	    		    System.out.print("\t Enter Your LatName : ");
 	    		    lastname = br.readLine().trim();
-	    		    System.out.println("Enter Your Email Address  : ");
+	    		    System.out.print("\t Enter Your Email Address  : ");
 	    		    email = br.readLine().trim();
-	    		    System.out.println("Enter Your Gender : ");
+	    		    System.out.print("\t Enter Your Gender : ");
 	    		    gender = br.readLine().trim();
-	    		    System.out.println("Enter Your ContactNumber  : ");
+	    		    System.out.print("\t Enter Your ContactNumber  : ");
 	    		    number = br.readLine().trim();
-	    		    System.out.println("Enter Your Address  : ");
+	    		    System.out.print("\t Enter Your Address  : ");
 	    		    address = br.readLine().trim();
-	    		    System.out.println("Enter Your Age : ");
+	    		    System.out.print("\t Enter Your Age : ");
 	    		    age = Integer.parseInt(br.readLine().trim());
 	    	  
 	    		    // generate user id
@@ -99,9 +99,9 @@ public class Main {
 	    		    break;
 
 		  case 2:
-		      	System.out.println("Enter username : ");
+		      	System.out.print("\t Enter username : ");
 			String name = br.readLine().trim();
-			System.out.println("Enter password : ");
+			System.out.print("\t Enter password : ");
 			String pass = br.readLine().trim();
 			
 			if(verifydao.login(name,pass)) {
@@ -109,7 +109,7 @@ public class Main {
 			    /// getting customer id from table userdetails
 			    user = verifydao.loadUserdetails(name,pass);
 			    user = verifydao.loadCustomerDetails(user);
-			    System.out.println("Login successful.");
+			    System.out.println("\t\t Login successful.");
 			    int X = 0;
 			    do
 				{
@@ -129,11 +129,11 @@ public class Main {
 					    try {
 					    System.out.print("Add to Cart Item by name :     ");
 					    nm  = br.readLine().trim();
-					    System.out.print("Enter Quantity :      ");
+					    System.out.print("\t\t Enter Quantity :      ");
 					    num = Integer.parseInt(br.readLine().trim());
 					    list = cruddao.addTocart(nm,list,num);
 					    }catch(Exception e) {
-						System.out.println("Wrong Input ....not Match with items..");
+						System.out.println("\t Wrong Input ....not Match with items..");
 					    }
 					    System.out.print("\t\t Want to add more items ? yes/no : ");
 					    yes = br.readLine();
@@ -173,14 +173,14 @@ public class Main {
 			    yes = br.readLine();
 			} while(yes.equals("yes"));
 			}else {
-				System.out.println("Incorrect username and password.");
+				System.out.println("\t\t Incorrect username and password.");
 			}
 			
 			break;
 		  case 3:
-		      	System.out.print("Enter Admin username :    ");
+		      	System.out.print("\t\t Enter Admin username :    ");
 			String adminName = br.readLine().trim();
-			System.out.print("Enter Admin password :    ");
+			System.out.print("\t\t Enter Admin password :    ");
 			String AdminPass = br.readLine().trim();
 			if(verifydao.login(adminName, AdminPass))
 			{
@@ -195,16 +195,16 @@ public class Main {
 			    switch(A) {
 			    case 1:
 				try {
-				 System.out.print("Enter nunber of products you want to add :  ");
+				 System.out.print("\t Enter nunber of products you want to add :  ");
 				 int  n = Integer.parseInt(br.readLine().trim());
 				 for(int i=0;i<n;i++) {
-				     System.out.print("Enter Product Name :    ");
+				     System.out.print("\t\t Enter Product Name :    ");
 				     String pname = br.readLine().trim();
-				     System.out.print("Add Product Price :    ");
+				     System.out.print("\t\t Add Product Price :    ");
 				     int  price = Integer.parseInt(br.readLine().trim());
-				     System.out.print("Add Product Description :    ");
+				     System.out.print("\t\t Add Product Description :    ");
 				     String pdes = br.readLine().trim();
-				     System.out.print("Add Product Quatity in Kg  :    ");
+				     System.out.print("\t\t Add Product Quatity in Kg  :    ");
 				     quantity = Integer.parseInt(br.readLine().trim());
 				     
 				     /// getting product id
@@ -224,7 +224,7 @@ public class Main {
 				try {
 				//displayproduct list AND update product
 				cruddao.displayProductlist();
-				System.out.println("ENTER PRODUCT_ID TO UPDATE OR DELETE PRODUCT .");
+				System.out.println("\t ENTER PRODUCT_ID TO UPDATE OR DELETE PRODUCT .");
 				String proid = br.readLine().trim();
 				System.out.println();
 				cruddao.updateProduct(proid);

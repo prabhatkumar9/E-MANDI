@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.Date;
+
 import model.User;
 import utility.ConnectionManager;
 public class UserDAO {
@@ -122,8 +124,8 @@ Connection con;
      int totalamount = 0;
      String invono = null;
      String ptype = null;
-     LocalDate paydate = null ;
-     LocalDate shipdate = null;
+     Date paydate = null ;
+    Date shipdate = null;
      String contact = null;
      String add  = null;
 
@@ -156,16 +158,17 @@ Connection con;
 	     totalamount = rs2.getInt(1);
 	     invono = rs2.getString(2);
 	     ptype  = rs2.getString(3);
-//	     paydate = rs.getDate(4).toLocalDate();
+	    paydate = rs2.getDate(4);
 	     contact = rs2.getString(5);
 	     add = rs2.getString(6);
-//	     shipdate = rs.getDate(7).toLocalDate();
+	     shipdate = rs2.getDate(7);
 	 }
      }
 	 System.out.println();	
      System.out.println("---------------------------------  Total amount : "+totalamount+"\t\t Invoice Number : "+invono+"  ---------------------------------");
      System.out.println("");
-     System.out.println("\t\t Payment Date : "+paydate+"\t\t Type of Payment : "+ptype+"\t\t Shiping Date : "+shipdate);
+     
+    System.out.println("\t\t Payment Date : "+paydate+"\t\t Type of Payment : "+ptype+"\t\t Shiping Date : "+shipdate);
      System.out.println();	
      System.out.println("\t\t Delivery Address : "+add+"\t\t Mobile Number : "+contact);	
      System.out.println();	
