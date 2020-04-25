@@ -161,6 +161,7 @@ public class Main {
 					    cruddao.payment(type,inv,orderId,CartValue);
 					    cruddao.pdfBillGeneration(list, user);
 					    list.clear();
+					    System.out.println("\t \t Order Placed Successfuly .... ! Congratulations ..");
 					}
 				    break;
 				case 3:
@@ -169,7 +170,7 @@ public class Main {
 				    userdao.fetchOrderHistory(user.getCustomerId());
 				    break;
 			    }  
-			    System.out.print("\t \t Do you want to continue UserPage ?   yes/no   :     ");
+			    System.out.print("\t \t Do you want to continue UserPanel ?   yes/no   :     ");
 			    yes = br.readLine();
 			} while(yes.equals("yes"));
 			}else {

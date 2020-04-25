@@ -100,8 +100,9 @@ public class ValidateUserFields {
 	/// registration
 	public boolean newRegistration(String username, String password){		
 		if(checkUserDetails(username,password)) {
-			System.out.println("New user registration successful.");
-			System.out.println("Please enter additional information..");
+			System.out.println("\t \t New user registration successful.");
+			System.out.println("\t \t Please enter additional information..");
+			System.out.println();
 			return true;
 		}
 		return false;

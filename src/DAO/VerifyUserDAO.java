@@ -3,8 +3,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import model.User;
+import service.VerifyUserInterface;
 import utility.ConnectionManager;
-public class VerifyUserDAO {
+public class VerifyUserDAO implements VerifyUserInterface {
 
     // verify existing user
     public boolean login(String name,String pass) throws Exception {

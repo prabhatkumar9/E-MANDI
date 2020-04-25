@@ -6,7 +6,7 @@ import java.sql.Statement;
 import model.Product;
 import utility.ConnectionManager;
 
-public class ProductDAO {
+public class ProductDAO implements ProductDaoInterface {
     ConnectionManager cm = new ConnectionManager();
     Connection con;
     

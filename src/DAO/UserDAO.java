@@ -3,12 +3,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.Date;
-
 import model.User;
 import utility.ConnectionManager;
-public class UserDAO {
+public class UserDAO implements  UserDAOInterface {
 
 ConnectionManager cm = new ConnectionManager();
 Connection con;
