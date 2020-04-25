@@ -133,7 +133,7 @@ public class Main {
 					    num = Integer.parseInt(br.readLine().trim());
 					    list = cruddao.addTocart(nm,list,num);
 					    }catch(Exception e) {
-						System.out.println("\t Wrong Input ....not Match with items..");
+						System.out.println("\t\t Wrong Input ....not Match with items..");
 					    }
 					    System.out.print("\t\t Want to add more items ? yes/no : ");
 					    yes = br.readLine();
@@ -170,6 +170,7 @@ public class Main {
 				    userdao.fetchOrderHistory(user.getCustomerId());
 				    break;
 			    }  
+			    System.out.println();
 			    System.out.print("\t \t Do you want to continue UserPanel ?   yes/no   :     ");
 			    yes = br.readLine();
 			} while(yes.equals("yes"));
